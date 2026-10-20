@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Handwritten Notes to Digital Text Converter</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-container">
+      <h1 class="app-title">Handwritten Notes to Digital Text Converter</h1>
+      <p class="app-subtitle">Computer vision preprocessing and deep learning optical character recognition.</p>
+    </div>
+  </header>
+
+  <div class="api-bar">
+    <div class="api-bar-container">
+      <div class="api-status-group">
+        <span class="status-indicator" id="statusIndicator"></span>
+        <span class="status-text" id="statusText">Connecting to backend API...</span>
+      </div>
+      <div class="api-config-group">
+        <label for="backendUrlInput">Backend URL:</label>
+        <input type="text" id="backendUrlInput" value="http://localhost:8000" placeholder="e.g. https://your-space.hf.space">
+        <button id="reconnectBtn" class="btn btn-secondary">Connect</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="main-container">
+    <div class="grid-layout">
+      <!-- Left Column: Controls and Input -->
+      <section class="card input-card">
+        <h2 class="card-title">1. Input Image Selection</h2>
+
+        <div class="tab-group">
+          <button class="tab-btn active" id="tabUpload">Upload Image</button>
+          <button class="tab-btn" id="tabSamples">IAM Dataset Samples</button>
+        </div>
+
+        <!-- Upload View -->
+        <div id="uploadView" class="tab-content active">
+          <div class="dropzone" id="dropZone">
+            <input type="file" id="fileInput" accept="image/png, image/jpeg, image/jpg, image/webp, image/bmp" class="file-input">
+            <div class="dropzone-prompt">
+              <span class="dropzone-text">Drag and drop handwritten image here</span>
+              <span class="dropzone-subtext">Supports PNG, JPG, JPEG, WEBP (Max 15 MB)</span>
+              <button type="button" class="btn btn-outline" id="browseBtn">Browse Files</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Samples View -->
+        <div id="samplesView" class="tab-content">
+          <p class="section-description">Select a genuine handwriting sample from the IAM database:</p>
+          <div class="sample-grid" id="sampleGrid">
+            <div class="loading-placeholder">Loading IAM dataset samples...</div>
+          </div>
+        </div>
+
+        <!-- Preprocessing Options -->
+        <div class="config-section">
+          <h2 class="card-title">2. Computer Vision Preprocessing</h2>
+          <label for="pipelineSelect" class="form-label">Preprocessing Pipeline Mode:</label>
+          <select id="pipelineSelect" class="form-select">
+            <option value="enhanced_grayscale">Enhanced Grayscale (Bilateral Filter + CLAHE) [Recommended]</option>
+            <option value="otsu_binarized">Otsu Binarization (Global Histogram Threshold)</option>
+            <option value="adaptive_binarized">Adaptive Gaussian Binarization (Local Neighborhood)</option>
+            <option value="raw">Raw (No Preprocessing)</option>
+          </select>
+          <p class="help-text">Select a pipeline to optimize image contrast and reduce paper grain before OCR inference.</p>
+        </div>
+
+        <button id="extractBtn" class="btn btn-primary btn-block" disabled>Extract Handwritten Text</button>
+
+        <div id="errorBanner" class="alert alert-error" style="display: none;"></div>
+      </section>
+
+      <!-- Right Column: Visual Previews and Extracted Results -->
+      <section class="card results-card">
+        <h2 class="card-title">3. Image Processing & Extraction Results</h2>
+
+        <!-- Image Previews -->
+        <div class="preview-container">
+          <div class="preview-box">
+            <span class="preview-label">Original Image</span>
+            <div class="preview-viewport" id="origViewport">
+              <span class="viewport-placeholder">No image selected</span>
+              <img id="origImg" class="preview-image" style="display: none;" alt="Original Image">
+            </div>
+          </div>
+          <div class="preview-box">
+            <span class="preview-label">Preprocessed Image</span>
+            <div class="preview-viewport" id="procViewport">
+              <span class="viewport-placeholder">Awaiting extraction</span>
+              <img id="procImg" class="preview-image" style="display: none;" alt="Preprocessed Image">
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Row -->
+        <div class="metrics-row" id="metricsRow" style="display: none;">
+          <div class="metric-item">
+            <span class="metric-label">Execution Time</span>
+            <span class="metric-value" id="metricTime">0.00 s</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Confidence Score</span>
+            <span class="metric-value" id="metricConf">0%</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Words Detected</span>
+            <span class="metric-value" id="metricWords">0</span>
+          </div>
+        </div>
+
+        <!-- Ground Truth Comparison (Shown if sample selected) -->
+        <div id="groundTruthSection" class="ground-truth-box" style="display: none;">
+          <span class="ground-truth-title">Ground-Truth Reference (IAM Database):</span>
+          <p id="groundTruthText" class="ground-truth-text"></p>
+        </div>
+
+        <!-- Extracted Text Area -->
+        <div class="text-section">
+          <label for="extractedTextArea" class="form-label">Extracted Digital Text (Editable):</label>
+          <textarea id="extractedTextArea" class="text-area" rows="6" placeholder="Extracted text will appear here after processing..."></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button id="copyBtn" class="btn btn-secondary" disabled>Copy to Clipboard</button>
+          <button id="downloadBtn" class="btn btn-secondary" disabled>Download Text File (.txt)</button>
+        </div>
+
+        <div id="statusMessage" class="status-notice" style="display: none;"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>Handwritten Notes to Digital Text Converter | Open-Source OCR Architecture</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

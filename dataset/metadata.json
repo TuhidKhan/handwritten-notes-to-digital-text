@@ -1,0 +1,51 @@
+[
+  {
+    "id": "sample_01",
+    "image_file": "sample_01.png",
+    "ground_truth_file": "sample_01.txt",
+    "ground_truth_text": "part . The rest of the cast were well chosen ,",
+    "dataset_source": "IAM Handwriting Database (Teklia/IAM-line validation split)"
+  },
+  {
+    "id": "sample_02",
+    "image_file": "sample_02.png",
+    "ground_truth_file": "sample_02.txt",
+    "ground_truth_text": "first-class performance last night as a",
+    "dataset_source": "IAM Handwriting Database (Teklia/IAM-line validation split)"
+  },
+  {
+    "id": "sample_03",
+    "image_file": "sample_03.png",
+    "ground_truth_file": "sample_03.txt",
+    "ground_truth_text": "the atmosphere of fog and mystery to great",
+    "dataset_source": "IAM Handwriting Database (Teklia/IAM-line validation split)"
+  },
+  {
+    "id": "sample_04",
+    "image_file": "sample_04.png",
+    "ground_truth_file": "sample_04.txt",
+    "ground_truth_text": "Lollobrigida . In the holiday seasonal months before and",
+    "dataset_source": "IAM Handwriting Database (Teklia/IAM-line validation split)"
+  },
+  {
+    "id": "sample_05",
+    "image_file": "sample_05.png",
+    "ground_truth_file": "sample_05.txt",
+    "ground_truth_text": "at his most nauseating ) turns the palazzo into a luxury",
+    "dataset_source": "IAM Handwriting Database (Teklia/IAM-line validation split)"
+  },
+  {
+    "id": "sample_06",
+    "image_file": "sample_06.png",
+    "ground_truth_file": "sample_06.txt",
+    "ground_truth_text": "Thomas Spreng",
+    "dataset_source": "IAM Handwriting Database (Teklia/IAM-line validation split)"
+  },
+  {
+    "id": "sample_07",
+    "image_file": "sample_07.png",
+    "ground_truth_file": "sample_07.txt",
+    "ground_truth_text": "forms . There are other texts which could",
+    "dataset_source": "IAM Handwriting Database (Teklia/IAM-line validation split)"
+  }
+]

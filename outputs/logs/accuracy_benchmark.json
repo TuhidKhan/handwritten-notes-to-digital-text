@@ -1,0 +1,532 @@
+{
+  "raw": {
+    "name": "Raw Baseline (No CV Preprocessing)",
+    "average_cer": 0.5008,
+    "average_wer": 1.1235,
+    "average_char_accuracy": 49.92,
+    "samples": [
+      {
+        "sample_id": "sample_01",
+        "ground_truth": "part . The rest of the cast were well chosen ,",
+        "prediction": "JGr )ul the ca^t Ibe}l mlll ekelen _ )",
+        "metrics": {
+          "cer": 0.6429,
+          "wer": 1.0,
+          "char_accuracy_pct": 35.71,
+          "char_distance": 27,
+          "word_distance": 9,
+          "gt_length": 42,
+          "pred_length": 33
+        }
+      },
+      {
+        "sample_id": "sample_02",
+        "ground_truth": "first-class performance last night as a",
+        "prediction": "Kout clam Mxovance last muqlLl @l Q",
+        "metrics": {
+          "cer": 0.5789,
+          "wer": 1.0,
+          "char_accuracy_pct": 42.11,
+          "char_distance": 22,
+          "word_distance": 6,
+          "gt_length": 38,
+          "pred_length": 34
+        }
+      },
+      {
+        "sample_id": "sample_03",
+        "ground_truth": "the atmosphere of fog and mystery to great",
+        "prediction": "th   almesphuic keq amd to gal",
+        "metrics": {
+          "cer": 0.5714,
+          "wer": 0.875,
+          "char_accuracy_pct": 42.86,
+          "char_distance": 24,
+          "word_distance": 7,
+          "gt_length": 42,
+          "pred_length": 28
+        }
+      },
+      {
+        "sample_id": "sample_04",
+        "ground_truth": "Lollobrigida . In the holiday seasonal months before and",
+        "prediction": "lollo hqida lv the kel dwy CeQ Gon al mths helorc ancl",
+        "metrics": {
+          "cer": 0.4074,
+          "wer": 1.375,
+          "char_accuracy_pct": 59.26,
+          "char_distance": 22,
+          "word_distance": 11,
+          "gt_length": 54,
+          "pred_length": 54
+        }
+      },
+      {
+        "sample_id": "sample_05",
+        "ground_truth": "at his most nauseating ) turns the palazzo into a luxury",
+        "prediction": "al hj mol nawakhy ) tumno h Qalazto mhlo 0 luxury",
+        "metrics": {
+          "cer": 0.4074,
+          "wer": 0.9,
+          "char_accuracy_pct": 59.26,
+          "char_distance": 22,
+          "word_distance": 9,
+          "gt_length": 54,
+          "pred_length": 47
+        }
+      },
+      {
+        "sample_id": "sample_06",
+        "ground_truth": "Thomas Spreng",
+        "prediction": "Thaas 5 rex 9",
+        "metrics": {
+          "cer": 0.5385,
+          "wer": 2.0,
+          "char_accuracy_pct": 46.15,
+          "char_distance": 7,
+          "word_distance": 4,
+          "gt_length": 13,
+          "pred_length": 13
+        }
+      },
+      {
+        "sample_id": "sample_07",
+        "ground_truth": "forms . There are other texts which could",
+        "prediction": "koins Tho & are otle texts 6Urcl (culc",
+        "metrics": {
+          "cer": 0.359,
+          "wer": 0.7143,
+          "char_accuracy_pct": 64.1,
+          "char_distance": 14,
+          "word_distance": 5,
+          "gt_length": 39,
+          "pred_length": 35
+        }
+      }
+    ]
+  },
+  "otsu_binarized": {
+    "name": "Otsu Binarization (Global Threshold)",
+    "average_cer": 0.476,
+    "average_wer": 1.0377,
+    "average_char_accuracy": 52.4,
+    "samples": [
+      {
+        "sample_id": "sample_01",
+        "ground_truth": "part . The rest of the cast were well chosen ,",
+        "prediction": "mtt Jhr the cot Ise)l Mxlll eleke",
+        "metrics": {
+          "cer": 0.619,
+          "wer": 0.8889,
+          "char_accuracy_pct": 38.1,
+          "char_distance": 26,
+          "word_distance": 8,
+          "gt_length": 42,
+          "pred_length": 32
+        }
+      },
+      {
+        "sample_id": "sample_02",
+        "ground_truth": "first-class performance last night as a",
+        "prediction": "Yixsl elos Mxlowance Last mualt 04 Q",
+        "metrics": {
+          "cer": 0.5263,
+          "wer": 1.0,
+          "char_accuracy_pct": 47.37,
+          "char_distance": 20,
+          "word_distance": 6,
+          "gt_length": 38,
+          "pred_length": 36
+        }
+      },
+      {
+        "sample_id": "sample_03",
+        "ground_truth": "the atmosphere of fog and mystery to great",
+        "prediction": "tht   atmosphohe Yex ad tatevs to",
+        "metrics": {
+          "cer": 0.5,
+          "wer": 0.875,
+          "char_accuracy_pct": 50.0,
+          "char_distance": 21,
+          "word_distance": 7,
+          "gt_length": 42,
+          "pred_length": 31
+        }
+      },
+      {
+        "sample_id": "sample_04",
+        "ground_truth": "Lollobrigida . In the holiday seasonal months before and",
+        "prediction": "lllohmgida . ln the kcl < du LeaSaal mnt hlorc anl",
+        "metrics": {
+          "cer": 0.3889,
+          "wer": 1.0,
+          "char_accuracy_pct": 61.11,
+          "char_distance": 21,
+          "word_distance": 8,
+          "gt_length": 54,
+          "pred_length": 46
+        }
+      },
+      {
+        "sample_id": "sample_05",
+        "ground_truth": "at his most nauseating ) turns the palazzo into a luxury",
+        "prediction": "al hj mot naweahhy ) #mo te Qalazto ihlo 0 lxuy",
+        "metrics": {
+          "cer": 0.4259,
+          "wer": 1.0,
+          "char_accuracy_pct": 57.41,
+          "char_distance": 23,
+          "word_distance": 10,
+          "gt_length": 54,
+          "pred_length": 44
+        }
+      },
+      {
+        "sample_id": "sample_06",
+        "ground_truth": "Thomas Spreng",
+        "prediction": "hhmas Sprell 7",
+        "metrics": {
+          "cer": 0.4615,
+          "wer": 1.5,
+          "char_accuracy_pct": 53.85,
+          "char_distance": 6,
+          "word_distance": 3,
+          "gt_length": 13,
+          "pred_length": 14
+        }
+      },
+      {
+        "sample_id": "sample_07",
+        "ground_truth": "forms . There are other texts which could",
+        "prediction": "toims , Tk%c Cre otley texhs G-Wicl (cilc",
+        "metrics": {
+          "cer": 0.4103,
+          "wer": 1.0,
+          "char_accuracy_pct": 58.97,
+          "char_distance": 16,
+          "word_distance": 7,
+          "gt_length": 39,
+          "pred_length": 36
+        }
+      }
+    ]
+  },
+  "adaptive_binarized": {
+    "name": "Adaptive Gaussian Binarization",
+    "average_cer": 0.5942,
+    "average_wer": 1.0633,
+    "average_char_accuracy": 40.58,
+    "samples": [
+      {
+        "sample_id": "sample_01",
+        "ground_truth": "part . The rest of the cast were well chosen ,",
+        "prediction": "bxt \"JAe 2lt th ca^t Usel qsell elkelen",
+        "metrics": {
+          "cer": 0.5714,
+          "wer": 1.0,
+          "char_accuracy_pct": 42.86,
+          "char_distance": 24,
+          "word_distance": 9,
+          "gt_length": 42,
+          "pred_length": 37
+        }
+      },
+      {
+        "sample_id": "sample_02",
+        "ground_truth": "first-class performance last night as a",
+        "prediction": "Yout elam fu/wamce last moft Q",
+        "metrics": {
+          "cer": 0.6053,
+          "wer": 1.0,
+          "char_accuracy_pct": 39.47,
+          "char_distance": 23,
+          "word_distance": 6,
+          "gt_length": 38,
+          "pred_length": 29
+        }
+      },
+      {
+        "sample_id": "sample_03",
+        "ground_truth": "the atmosphere of fog and mystery to great",
+        "prediction": "atmcsF pose ad ntpvk ko",
+        "metrics": {
+          "cer": 0.6905,
+          "wer": 1.0,
+          "char_accuracy_pct": 30.95,
+          "char_distance": 29,
+          "word_distance": 8,
+          "gt_length": 42,
+          "pred_length": 23
+        }
+      },
+      {
+        "sample_id": "sample_04",
+        "ground_truth": "Lollobrigida . In the holiday seasonal months before and",
+        "prediction": "Lollo bngida Iv tne kol dpu LeQ Som all mth bbrc Olncl",
+        "metrics": {
+          "cer": 0.4815,
+          "wer": 1.5,
+          "char_accuracy_pct": 51.85,
+          "char_distance": 26,
+          "word_distance": 12,
+          "gt_length": 54,
+          "pred_length": 54
+        }
+      },
+      {
+        "sample_id": "sample_05",
+        "ground_truth": "at his most nauseating ) turns the palazzo into a luxury",
+        "prediction": "a8 hj Itl nawbahh; ) trno tke pla?xo mlo a luxury",
+        "metrics": {
+          "cer": 0.4259,
+          "wer": 0.8,
+          "char_accuracy_pct": 57.41,
+          "char_distance": 23,
+          "word_distance": 8,
+          "gt_length": 54,
+          "pred_length": 45
+        }
+      },
+      {
+        "sample_id": "sample_06",
+        "ground_truth": "Thomas Spreng",
+        "prediction": "A GM",
+        "metrics": {
+          "cer": 0.8462,
+          "wer": 1.0,
+          "char_accuracy_pct": 15.38,
+          "char_distance": 11,
+          "word_distance": 2,
+          "gt_length": 13,
+          "pred_length": 4
+        }
+      },
+      {
+        "sample_id": "sample_07",
+        "ground_truth": "forms . There are other texts which could",
+        "prediction": "tos TL CC ofl texhs GWcl, Coul c",
+        "metrics": {
+          "cer": 0.5385,
+          "wer": 1.1429,
+          "char_accuracy_pct": 46.15,
+          "char_distance": 21,
+          "word_distance": 8,
+          "gt_length": 39,
+          "pred_length": 31
+        }
+      }
+    ]
+  },
+  "enhanced_grayscale": {
+    "name": "Enhanced Grayscale (Bilateral + CLAHE)",
+    "average_cer": 0.4625,
+    "average_wer": 1.0367,
+    "average_char_accuracy": 53.75,
+    "samples": [
+      {
+        "sample_id": "sample_01",
+        "ground_truth": "part . The rest of the cast were well chosen ,",
+        "prediction": "JRe thk co^l Ibexl melll ckek , )",
+        "metrics": {
+          "cer": 0.6429,
+          "wer": 1.0,
+          "char_accuracy_pct": 35.71,
+          "char_distance": 27,
+          "word_distance": 9,
+          "gt_length": 42,
+          "pred_length": 28
+        }
+      },
+      {
+        "sample_id": "sample_02",
+        "ground_truth": "first-class performance last night as a",
+        "prediction": "{ixst clom puxlowance last mqlt @l Q",
+        "metrics": {
+          "cer": 0.4737,
+          "wer": 1.0,
+          "char_accuracy_pct": 52.63,
+          "char_distance": 18,
+          "word_distance": 6,
+          "gt_length": 38,
+          "pred_length": 34
+        }
+      },
+      {
+        "sample_id": "sample_03",
+        "ground_truth": "the atmosphere of fog and mystery to great",
+        "prediction": "th   atmcsphoic kex ad to qal",
+        "metrics": {
+          "cer": 0.5714,
+          "wer": 0.875,
+          "char_accuracy_pct": 42.86,
+          "char_distance": 24,
+          "word_distance": 7,
+          "gt_length": 42,
+          "pred_length": 27
+        }
+      },
+      {
+        "sample_id": "sample_04",
+        "ground_truth": "Lollobrigida . In the holiday seasonal months before and",
+        "prediction": "lollo hngida In tne kol duy ceafomal mmth helorc anl",
+        "metrics": {
+          "cer": 0.3148,
+          "wer": 1.125,
+          "char_accuracy_pct": 68.52,
+          "char_distance": 17,
+          "word_distance": 9,
+          "gt_length": 54,
+          "pred_length": 52
+        }
+      },
+      {
+        "sample_id": "sample_05",
+        "ground_truth": "at his most nauseating ) turns the palazzo into a luxury",
+        "prediction": "al hj mot nawtahly ) tums t Qalazto mhlo 0 luxury",
+        "metrics": {
+          "cer": 0.3889,
+          "wer": 0.9,
+          "char_accuracy_pct": 61.11,
+          "char_distance": 21,
+          "word_distance": 9,
+          "gt_length": 54,
+          "pred_length": 47
+        }
+      },
+      {
+        "sample_id": "sample_06",
+        "ground_truth": "Thomas Spreng",
+        "prediction": "Thaas Sprell 7",
+        "metrics": {
+          "cer": 0.4615,
+          "wer": 1.5,
+          "char_accuracy_pct": 53.85,
+          "char_distance": 6,
+          "word_distance": 3,
+          "gt_length": 13,
+          "pred_length": 14
+        }
+      },
+      {
+        "sample_id": "sample_07",
+        "ground_truth": "forms . There are other texts which could",
+        "prediction": "Iorns Th% & ace otl texts 6Wcl (cild",
+        "metrics": {
+          "cer": 0.3846,
+          "wer": 0.8571,
+          "char_accuracy_pct": 61.54,
+          "char_distance": 15,
+          "word_distance": 6,
+          "gt_length": 39,
+          "pred_length": 32
+        }
+      }
+    ]
+  },
+  "tuned_handwriting_config": {
+    "name": "Enhanced Grayscale + Cursive Slant Tuning",
+    "average_cer": 0.5716,
+    "average_wer": 1.0036,
+    "average_char_accuracy": 42.84,
+    "samples": [
+      {
+        "sample_id": "sample_01",
+        "ground_truth": "part . The rest of the cast were well chosen ,",
+        "prediction": "pxt . Jhe   >4 thr   col nxelll   ckesen , )",
+        "metrics": {
+          "cer": 0.5238,
+          "wer": 1.0,
+          "char_accuracy_pct": 47.62,
+          "char_distance": 22,
+          "word_distance": 9,
+          "gt_length": 42,
+          "pred_length": 31
+        }
+      },
+      {
+        "sample_id": "sample_02",
+        "ground_truth": "first-class performance last night as a",
+        "prediction": "{ixst clal Mxfowonce   lost 0l Q",
+        "metrics": {
+          "cer": 0.5526,
+          "wer": 1.0,
+          "char_accuracy_pct": 44.74,
+          "char_distance": 21,
+          "word_distance": 6,
+          "gt_length": 38,
+          "pred_length": 29
+        }
+      },
+      {
+        "sample_id": "sample_03",
+        "ground_truth": "the atmosphere of fog and mystery to great",
+        "prediction": "tht   dmexphbhe #x ad",
+        "metrics": {
+          "cer": 0.7381,
+          "wer": 1.0,
+          "char_accuracy_pct": 26.19,
+          "char_distance": 31,
+          "word_distance": 8,
+          "gt_length": 42,
+          "pred_length": 18
+        }
+      },
+      {
+        "sample_id": "sample_04",
+        "ground_truth": "Lollobrigida . In the holiday seasonal months before and",
+        "prediction": "lollohngida I Ine holi dgy CeQSonal month belorc anl",
+        "metrics": {
+          "cer": 0.2593,
+          "wer": 1.125,
+          "char_accuracy_pct": 74.07,
+          "char_distance": 14,
+          "word_distance": 9,
+          "gt_length": 54,
+          "pred_length": 52
+        }
+      },
+      {
+        "sample_id": "sample_05",
+        "ground_truth": "at his most nauseating ) turns the palazzo into a luxury",
+        "prediction": "a/ hj mot nawtahly ) turo tx (alazto mhlo a lxury",
+        "metrics": {
+          "cer": 0.3889,
+          "wer": 0.9,
+          "char_accuracy_pct": 61.11,
+          "char_distance": 21,
+          "word_distance": 9,
+          "gt_length": 54,
+          "pred_length": 45
+        }
+      },
+      {
+        "sample_id": "sample_06",
+        "ground_truth": "Thomas Spreng",
+        "prediction": "Maas Sreu]",
+        "metrics": {
+          "cer": 0.5385,
+          "wer": 1.0,
+          "char_accuracy_pct": 46.15,
+          "char_distance": 7,
+          "word_distance": 2,
+          "gt_length": 13,
+          "pred_length": 9
+        }
+      },
+      {
+        "sample_id": "sample_07",
+        "ground_truth": "forms . There are other texts which could",
+        "prediction": "",
+        "metrics": {
+          "cer": 1.0,
+          "wer": 1.0,
+          "char_accuracy_pct": 0.0,
+          "char_distance": 39,
+          "word_distance": 7,
+          "gt_length": 39,
+          "pred_length": 0
+        }
+      }
+    ]
+  }
+}
