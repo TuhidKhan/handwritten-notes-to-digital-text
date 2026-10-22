@@ -9,6 +9,7 @@ import os
 import json
 import time
 import datetime
+import cv2
 from PIL import Image
 import numpy as np
 import streamlit as st
@@ -33,30 +34,57 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Corporate, clean styling - Strictly zero emojis, professional typography
+# Modern, corporate styling - Strictly zero emojis, dark/light theme adaptive
 st.markdown(
     """
     <style>
     /* Global layout & typography */
     .main .block-container {
-        padding-top: 2rem;
+        padding-top: 1.8rem;
         padding-bottom: 2.5rem;
         max-width: 1200px;
     }
     
     /* Header styling */
     .app-header-title {
-        font-size: 1.65rem;
+        font-size: 1.7rem;
         font-weight: 700;
-        color: #0f172a;
         margin-bottom: 0.25rem;
         letter-spacing: -0.02em;
     }
     .app-header-subtitle {
         font-size: 0.95rem;
-        color: #64748b;
+        opacity: 0.8;
         margin-bottom: 1.5rem;
-        line-height: 1.4;
+        line-height: 1.45;
+    }
+    
+    /* Sidebar info card */
+    .sidebar-card {
+        background: rgba(128, 128, 128, 0.08);
+        border: 1px solid rgba(128, 128, 128, 0.25);
+        border-radius: 8px;
+        padding: 0.9rem;
+        margin-bottom: 1rem;
+    }
+    .sidebar-card-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 700;
+        opacity: 0.75;
+        margin-bottom: 0.35rem;
+    }
+    .sidebar-card-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    .sidebar-card-desc {
+        font-size: 0.82rem;
+        opacity: 0.8;
+        line-height: 1.35;
+        margin: 0;
     }
     
     /* Metrics display card */
@@ -68,48 +96,65 @@ st.markdown(
     }
     .metric-card {
         flex: 1;
-        background-color: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        padding: 0.75rem 1rem;
+        background: rgba(128, 128, 128, 0.07);
+        border: 1px solid rgba(128, 128, 128, 0.2);
+        border-radius: 8px;
+        padding: 0.85rem 1rem;
         text-align: center;
     }
     .metric-card-title {
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         text-transform: uppercase;
-        color: #64748b;
+        opacity: 0.75;
         font-weight: 600;
         letter-spacing: 0.05em;
     }
     .metric-card-value {
-        font-size: 1.35rem;
+        font-size: 1.4rem;
         font-weight: 700;
-        color: #0f172a;
-        margin-top: 0.2rem;
+        margin-top: 0.25rem;
     }
     
     /* Ground truth comparison box */
     .ground-truth-box {
-        background-color: #f0f9ff;
-        border: 1px solid #bae6fd;
-        border-radius: 6px;
+        background: rgba(14, 165, 233, 0.08);
+        border: 1px solid rgba(14, 165, 233, 0.3);
+        border-radius: 8px;
         padding: 0.85rem 1rem;
         margin-top: 0.75rem;
         margin-bottom: 1rem;
     }
     .ground-truth-title {
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #0369a1;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #0284c7;
         text-transform: uppercase;
         letter-spacing: 0.04em;
     }
     .ground-truth-text {
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-        font-size: 0.9rem;
-        color: #0c4a6e;
+        font-size: 0.92rem;
         margin-top: 0.3rem;
         margin-bottom: 0;
+    }
+    
+    /* Professional footer */
+    .app-footer {
+        margin-top: 3.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(128, 128, 128, 0.2);
+        text-align: center;
+        font-size: 0.85rem;
+        opacity: 0.85;
+    }
+    .app-footer a {
+        color: #38bdf8;
+        text-decoration: none;
+        font-weight: 500;
+        margin: 0 0.25rem;
+    }
+    .app-footer a:hover {
+        text-decoration: underline;
     }
     </style>
     """,
@@ -141,42 +186,47 @@ def load_sample_dataset_metadata():
 
 
 # ---------------------------------------------------------------------------
-# 3. Sidebar Configuration
+# 3. Sidebar Configuration (Clean, No Confusing Options)
 # ---------------------------------------------------------------------------
+
+# Use the single best preprocessing pipeline verified by empirical benchmarking (53.75% accuracy)
+OPTIMIZED_PIPELINE = "enhanced_grayscale"
 
 with st.sidebar:
     st.subheader("System Configuration")
     
-    pipeline_mode_label = st.selectbox(
-        "Preprocessing Pipeline",
-        options=[
-            "Enhanced Grayscale (Bilateral Filter + CLAHE) [Recommended]",
-            "Otsu Binarization (Global Histogram Threshold)",
-            "Adaptive Gaussian Binarization (Local Neighborhood)",
-            "Raw (No Preprocessing)",
-        ],
-        index=0,
-        help="Select a computer vision filter to optimize contrast and suppress paper grain.",
+    st.markdown(
+        """
+        <div class="sidebar-card">
+            <div class="sidebar-card-title">Active Vision Pipeline</div>
+            <div class="sidebar-card-name">Enhanced Grayscale (Bilateral + CLAHE)</div>
+            <p class="sidebar-card-desc">
+                Automatically applies edge-preserving noise filtering and contrast equalization. 
+                Optimized specifically for handwritten ink on paper.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
     
-    # Map friendly label to pipeline key
-    pipeline_mode_map = {
-        "Enhanced Grayscale (Bilateral Filter + CLAHE) [Recommended]": "enhanced_grayscale",
-        "Otsu Binarization (Global Histogram Threshold)": "otsu_binarized",
-        "Adaptive Gaussian Binarization (Local Neighborhood)": "adaptive_binarized",
-        "Raw (No Preprocessing)": "raw",
-    }
-    selected_pipeline = pipeline_mode_map[pipeline_mode_label]
-    
-    st.markdown("---")
     st.markdown("**Architecture Overview**")
     st.markdown("- **Text Detection**: CRAFT Neural Network")
     st.markdown("- **Text Recognition**: CRNN + ResNet + BiLSTM")
     st.markdown("- **Framework**: EasyOCR / PyTorch / OpenCV")
-    st.markdown("- **Dataset**: IAM Handwriting Database (7 samples)")
+    st.markdown("- **Benchmark Dataset**: IAM Handwriting Database (7 samples)")
     
     st.markdown("---")
-    st.caption("Handwritten Notes to Digital Text Converter | Open-Source Architecture")
+    st.markdown(
+        """
+        <div style="font-size: 0.82rem; opacity: 0.85; line-height: 1.5;">
+            <strong>Developer</strong><br>
+            Tuhid Khan<br>
+            <a href="https://github.com/TuhidKhan" target="_blank" style="color: #38bdf8; text-decoration: none;">GitHub</a> &nbsp;|&nbsp;
+            <a href="https://www.linkedin.com/in/tuhid-khan/" target="_blank" style="color: #38bdf8; text-decoration: none;">LinkedIn</a>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -186,11 +236,12 @@ with st.sidebar:
 st.markdown('<div class="app-header-title">Handwritten Notes to Digital Text Converter</div>', unsafe_allow_html=True)
 st.markdown(
     '<div class="app-header-subtitle">'
-    'Deep learning Optical Character Recognition system with computer vision image preprocessing. '
-    'Upload a handwritten note image or evaluate using built-in IAM dataset benchmark samples.'
+    'Deep learning Optical Character Recognition system with automated OpenCV preprocessing. '
+    'Upload a handwritten note or select a curated IAM benchmark sample to extract digital text.'
     '</div>',
     unsafe_allow_html=True,
 )
+
 
 # ---------------------------------------------------------------------------
 # 5. Input Image Selection (Upload vs. IAM Dataset)
@@ -198,7 +249,7 @@ st.markdown(
 
 input_source_tab = st.radio(
     "Select Input Source",
-    options=["Upload Image File", "Select IAM Dataset Sample"],
+    options=["Select IAM Dataset Sample", "Upload Image File"],
     horizontal=True,
     label_visibility="collapsed",
 )
@@ -237,36 +288,28 @@ else:
     else:
         st.warning("No IAM dataset samples found in the dataset directory.")
 
+
 # ---------------------------------------------------------------------------
-# 6. Side-by-Side Visualizations & Preprocessing
+# 6. Interactive Extraction & Visual Inspection
 # ---------------------------------------------------------------------------
 
 if input_image_raw is not None:
-    # Execute computer vision preprocessing pipeline
-    orig_bgr, proc_bgr = preprocess_image(input_image_raw, pipeline_mode=selected_pipeline)
+    # Execute computer vision preprocessing pipeline (Enhanced Grayscale)
+    orig_bgr, proc_bgr = preprocess_image(input_image_raw, pipeline_mode=OPTIMIZED_PIPELINE)
     
-    # Convert BGR to RGB for correct Streamlit rendering
+    # Convert BGR to RGB for accurate rendering in Streamlit
     orig_rgb = cv2.cvtColor(orig_bgr, cv2.COLOR_BGR2RGB) if len(orig_bgr.shape) == 3 else orig_bgr
     proc_rgb = cv2.cvtColor(proc_bgr, cv2.COLOR_BGR2RGB) if len(proc_bgr.shape) == 3 else proc_bgr
     
-    st.markdown("#### Image Inspection")
-    col_orig, col_proc = st.columns(2)
-    
-    with col_orig:
-        st.caption("Original Input Image")
-        st.image(orig_rgb, use_container_width=True)
-        
-    with col_proc:
-        st.caption(f"Preprocessed Image ({selected_pipeline})")
-        st.image(proc_rgb, use_container_width=True)
-    
-    # -----------------------------------------------------------------------
-    # 7. OCR Extraction Action
-    # -----------------------------------------------------------------------
-    st.markdown("#### OCR Text Extraction")
-    extract_button = st.button("Extract Handwritten Text", type="primary", use_container_width=True)
-    
-    # Manage session state for results persistence across widget interactions
+    # Prominent Action Trigger placed directly with input selection
+    st.markdown("<div style='margin-top: 0.5rem;'></div>", unsafe_allow_html=True)
+    extract_col1, extract_col2 = st.columns([1, 2])
+    with extract_col1:
+        extract_button = st.button("Extract Handwritten Text", type="primary", use_container_width=True)
+    with extract_col2:
+        st.caption("Click to execute deep learning OCR inference and character recognition.")
+
+    # Execution logic on click
     if extract_button:
         with st.spinner("Processing image and executing neural network character recognition..."):
             start_time = time.time()
@@ -283,19 +326,33 @@ if input_image_raw is not None:
             )
             elapsed_time = round(time.time() - start_time, 3)
             
-            # Store in session state
+            # Store results in session state
             st.session_state["ocr_result"] = result
             st.session_state["elapsed_time"] = elapsed_time
             st.session_state["source_name"] = source_name
             st.session_state["selected_sample_meta"] = selected_sample_meta
+
+    # Image Inspection Previews (Original vs. Preprocessed)
+    st.markdown("#### Image Inspection")
+    col_orig, col_proc = st.columns(2)
+    
+    with col_orig:
+        st.caption("Original Input Image")
+        st.image(orig_rgb, use_container_width=True)
+        
+    with col_proc:
+        st.caption("Preprocessed Image (Enhanced Grayscale)")
+        st.image(proc_rgb, use_container_width=True)
     
     # -----------------------------------------------------------------------
-    # 8. Display Results & Metrics
+    # 7. Display Results & Transcribed Output
     # -----------------------------------------------------------------------
-    if "ocr_result" in st.session_state:
+    if "ocr_result" in st.session_state and st.session_state.get("source_name") == source_name:
         res = st.session_state["ocr_result"]
         elapsed = st.session_state.get("elapsed_time", 0.0)
         curr_sample_meta = st.session_state.get("selected_sample_meta")
+        
+        st.markdown("#### Recognition Results")
         
         # Metrics summary cards
         st.markdown(
@@ -335,7 +392,7 @@ if input_image_raw is not None:
         extracted_text_value = st.text_area(
             "Extracted Digital Text (Editable)",
             value=res["text"],
-            height=160,
+            height=140,
             help="You can review and edit the transcribed text directly.",
         )
         
@@ -361,3 +418,19 @@ if input_image_raw is not None:
 
 else:
     st.info("Select an IAM benchmark sample above or upload an image to begin OCR processing.")
+
+
+# ---------------------------------------------------------------------------
+# 8. Professional Footer
+# ---------------------------------------------------------------------------
+
+st.markdown(
+    """
+    <div class="app-footer">
+        Developed by <strong>Tuhid Khan</strong> &nbsp;|&nbsp; 
+        <a href="https://github.com/TuhidKhan" target="_blank" rel="noopener noreferrer">GitHub</a> &nbsp;|&nbsp; 
+        <a href="https://www.linkedin.com/in/tuhid-khan/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
