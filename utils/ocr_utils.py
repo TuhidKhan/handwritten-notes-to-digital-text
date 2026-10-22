@@ -225,6 +225,7 @@ def save_text_to_disk(
 def run_ocr(
     image: np.ndarray,
     reader: Optional[easyocr.Reader] = None,
+    languages: Optional[List[str]] = None,
     save_output: bool = True,
     base_name: str = "note",
 ) -> Dict[str, Any]:
@@ -233,6 +234,7 @@ def run_ocr(
     Args:
         image: Preprocessed OpenCV image matrix (grayscale or BGR).
         reader: EasyOCR reader instance (if None, uses singleton).
+        languages: Language list if initializing reader dynamically.
         save_output: Whether to automatically save extracted text to disk.
         base_name: Prefix name for the saved output file.
 
@@ -241,7 +243,7 @@ def run_ocr(
                         confidence, word details, and saved file path.
     """
     if reader is None:
-        reader = get_ocr_reader()
+        reader = get_ocr_reader(languages=languages or ["en"])
 
     # Step 1: Run deep learning inference
     raw_results = reader.readtext(image, detail=1, paragraph=False)

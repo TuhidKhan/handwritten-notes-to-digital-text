@@ -1,14 +1,12 @@
-# Core Computer Vision & OCR
-opencv-python-headless>=4.8.0
-easyocr>=1.7.0
-numpy>=1.24.0,<2.0.0
-Pillow>=9.5.0
+# Core Streamlit Application
+streamlit>=1.30.0
 
-# Deep Learning Runtime
+# Computer Vision & Image Preprocessing
+opencv-python-headless>=4.8.0
+Pillow>=9.5.0
+numpy>=1.24.0,<2.0.0
+
+# Deep Learning OCR Engine
+easyocr>=1.7.0
 torch>=2.0.0
 torchvision>=0.15.0
-
-# Backend REST API & ASGI Server
-fastapi>=0.110.0
-uvicorn[standard]>=0.28.0
-python-multipart>=0.0.9
