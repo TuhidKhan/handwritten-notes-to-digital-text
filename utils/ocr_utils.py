@@ -137,12 +137,14 @@ def sort_detections_in_reading_order(
 def clean_and_assemble_text(
     sorted_detections: List[Tuple[List[List[int]], str, float]],
     confidence_threshold: float = 0.10,
+    preserve_newlines: bool = True,
 ) -> Dict[str, Any]:
     """Cleans raw text segments and reconstructs readable paragraphs with confidence scoring.
 
     Args:
         sorted_detections: Sorted list of (bbox, text, confidence).
         confidence_threshold: Minimum confidence score to include a detected segment.
+        preserve_newlines: Whether to preserve separate lines using newlines.
 
     Returns:
         Dict[str, Any]: {
@@ -162,7 +164,7 @@ def clean_and_assemble_text(
             "details": [],
         }
 
-    valid_words = []
+    items = []
     confidences = []
     details = []
 
@@ -173,8 +175,18 @@ def clean_and_assemble_text(
             continue
 
         if conf >= confidence_threshold:
-            valid_words.append(cleaned)
-            confidences.append(conf)
+            xs = [pt[0] for pt in bbox]
+            ys = [pt[1] for pt in bbox]
+            items.append(
+                {
+                    "text": cleaned,
+                    "conf": float(conf),
+                    "bbox": [[int(pt[0]), int(pt[1])] for pt in bbox],
+                    "y_center": (min(ys) + max(ys)) / 2.0,
+                    "height": max(1, max(ys) - min(ys)),
+                }
+            )
+            confidences.append(float(conf))
             details.append(
                 {
                     "text": cleaned,
@@ -183,14 +195,48 @@ def clean_and_assemble_text(
                 }
             )
 
-    full_text = " ".join(valid_words)
+    if not items:
+        return {
+            "text": "",
+            "lines": [],
+            "average_confidence": 0.0,
+            "word_count": 0,
+            "details": [],
+        }
+
+    # Group into distinct lines if preserve_newlines is requested
+    if preserve_newlines and len(items) > 1:
+        avg_height = float(np.median([it["height"] for it in items]))
+        line_thresh = avg_height * 0.6
+        lines = []
+        current_words = []
+        current_y = None
+
+        for it in items:
+            if current_y is None:
+                current_words.append(it["text"])
+                current_y = it["y_center"]
+            elif abs(it["y_center"] - current_y) <= line_thresh:
+                current_words.append(it["text"])
+            else:
+                lines.append(" ".join(current_words))
+                current_words = [it["text"]]
+                current_y = it["y_center"]
+
+        if current_words:
+            lines.append(" ".join(current_words))
+        full_text = "\n".join(lines)
+    else:
+        full_text = " ".join([it["text"] for it in items])
+        lines = [full_text] if full_text else []
+
     avg_conf = float(np.mean(confidences)) if confidences else 0.0
 
     return {
         "text": full_text,
-        "lines": [full_text] if full_text else [],
+        "lines": lines,
         "average_confidence": round(avg_conf, 4),
-        "word_count": len(valid_words),
+        "word_count": len(items),
         "details": details,
     }
 

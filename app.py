@@ -186,10 +186,9 @@ def load_sample_dataset_metadata():
 
 
 # ---------------------------------------------------------------------------
-# 3. Sidebar Configuration (Clean, No Confusing Options)
+# 3. Sidebar Configuration (Clean, Matching Project PDF Tech Stack)
 # ---------------------------------------------------------------------------
 
-# Use the single best preprocessing pipeline verified by empirical benchmarking (53.75% accuracy)
 OPTIMIZED_PIPELINE = "enhanced_grayscale"
 
 with st.sidebar:
@@ -209,11 +208,13 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
     
-    st.markdown("**Architecture Overview**")
-    st.markdown("- **Text Detection**: CRAFT Neural Network")
-    st.markdown("- **Text Recognition**: CRNN + ResNet + BiLSTM")
-    st.markdown("- **Framework**: EasyOCR / PyTorch / OpenCV")
-    st.markdown("- **Benchmark Dataset**: IAM Handwriting Database (7 samples)")
+    # Direct match to Section 6 Tech Stack from Project Specification PDF
+    st.markdown("**Tech Stack (from Project Specification)**")
+    st.markdown("- **Python**: Core programming language")
+    st.markdown("- **OpenCV**: Computer vision image preprocessing")
+    st.markdown("- **EasyOCR**: Optical Character Recognition engine")
+    st.markdown("- **NumPy**: Numerical matrix operations")
+    st.markdown("- **Streamlit**: Web application framework")
     
     st.markdown("---")
     st.markdown(
@@ -265,11 +266,27 @@ if input_source_tab == "Upload Image File":
         help="Supports standard image formats up to 15 MB.",
     )
     if uploaded_file is not None:
-        file_bytes = uploaded_file.read()
-        input_image_raw = load_image(file_bytes)
-        source_name = os.path.splitext(uploaded_file.name)[0]
+        try:
+            # Use getvalue() so the byte stream is persistent across all reruns
+            file_bytes = uploaded_file.getvalue()
+            input_image_raw = load_image(file_bytes)
+            source_name = os.path.splitext(uploaded_file.name)[0]
+            st.session_state["cached_upload_image"] = input_image_raw
+            st.session_state["cached_upload_name"] = source_name
+        except Exception as e:
+            st.error(f"Error loading image: {e}")
+    elif "cached_upload_image" in st.session_state:
+        # Retain uploaded image across button clicks and widget interactions
+        input_image_raw = st.session_state["cached_upload_image"]
+        source_name = st.session_state.get("cached_upload_name", "uploaded_note")
+    
+    st.caption("Tip: Clear photos with straight horizontal handwriting and good lighting produce the best OCR results.")
 
 else:
+    # Clear uploaded cache when user switches to dataset tab
+    st.session_state.pop("cached_upload_image", None)
+    st.session_state.pop("cached_upload_name", None)
+    
     samples = load_sample_dataset_metadata()
     if samples:
         sample_options = {
@@ -294,6 +311,11 @@ else:
 # ---------------------------------------------------------------------------
 
 if input_image_raw is not None:
+    # Reset OCR results if the user changed to a different sample or image
+    if st.session_state.get("active_source_id") != source_name:
+        st.session_state["active_source_id"] = source_name
+        st.session_state.pop("ocr_result", None)
+
     # Execute computer vision preprocessing pipeline (Enhanced Grayscale)
     orig_bgr, proc_bgr = preprocess_image(input_image_raw, pipeline_mode=OPTIMIZED_PIPELINE)
     
@@ -301,11 +323,16 @@ if input_image_raw is not None:
     orig_rgb = cv2.cvtColor(orig_bgr, cv2.COLOR_BGR2RGB) if len(orig_bgr.shape) == 3 else orig_bgr
     proc_rgb = cv2.cvtColor(proc_bgr, cv2.COLOR_BGR2RGB) if len(proc_bgr.shape) == 3 else proc_bgr
     
-    # Prominent Action Trigger placed directly with input selection
+    # Prominent Action Trigger placed directly below the input selection
     st.markdown("<div style='margin-top: 0.5rem;'></div>", unsafe_allow_html=True)
     extract_col1, extract_col2 = st.columns([1, 2])
     with extract_col1:
-        extract_button = st.button("Extract Handwritten Text", type="primary", use_container_width=True)
+        extract_button = st.button(
+            "Extract Handwritten Text",
+            type="primary",
+            use_container_width=True,
+            key="btn_extract_action",
+        )
     with extract_col2:
         st.caption("Click to execute deep learning OCR inference and character recognition.")
 
@@ -329,7 +356,6 @@ if input_image_raw is not None:
             # Store results in session state
             st.session_state["ocr_result"] = result
             st.session_state["elapsed_time"] = elapsed_time
-            st.session_state["source_name"] = source_name
             st.session_state["selected_sample_meta"] = selected_sample_meta
 
     # Image Inspection Previews (Original vs. Preprocessed)
@@ -347,7 +373,7 @@ if input_image_raw is not None:
     # -----------------------------------------------------------------------
     # 7. Display Results & Transcribed Output
     # -----------------------------------------------------------------------
-    if "ocr_result" in st.session_state and st.session_state.get("source_name") == source_name:
+    if "ocr_result" in st.session_state:
         res = st.session_state["ocr_result"]
         elapsed = st.session_state.get("elapsed_time", 0.0)
         curr_sample_meta = st.session_state.get("selected_sample_meta")
@@ -401,7 +427,7 @@ if input_image_raw is not None:
         
         with col_dl:
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            filename = f"extracted_{st.session_state.get('source_name', 'note')}_{timestamp}.txt"
+            filename = f"extracted_{st.session_state.get('active_source_id', 'note')}_{timestamp}.txt"
             
             st.download_button(
                 label="Download Text File (.txt)",

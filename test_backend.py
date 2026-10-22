@@ -120,7 +120,7 @@ def test_ocr_engine_and_sorting():
     cleaned_text = res_assembly["text"]
     avg_conf = res_assembly["average_confidence"]
     word_count = res_assembly["word_count"]
-    assert cleaned_text == "First Third Second"
+    assert cleaned_text.replace("\n", " ") == "First Third Second"
     assert round(avg_conf, 4) == 0.9500
     assert word_count == 3
     print(f"  [PASS] clean_and_assemble_text: text merged, confidence calculated = {avg_conf:.4f}, words = {word_count}")
