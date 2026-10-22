@@ -1,10 +1,10 @@
 services:
   - type: web
-    name: handwritten-notes-ocr
+    name: handwritten-notes-to-digital-text
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn api:app --host 0.0.0.0 --port $PORT
+    buildCommand: pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt
+    startCommand: python api.py
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
