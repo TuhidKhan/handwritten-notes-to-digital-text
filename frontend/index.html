@@ -9,21 +9,38 @@
 <body>
   <header class="app-header">
     <div class="header-container">
-      <h1 class="app-title">Handwritten Notes to Digital Text Converter</h1>
-      <p class="app-subtitle">Computer vision preprocessing and deep learning optical character recognition.</p>
+      <div class="header-titles">
+        <h1 class="app-title">Handwritten Notes to Digital Text Converter</h1>
+        <p class="app-subtitle">Computer vision preprocessing and deep learning optical character recognition.</p>
+      </div>
+      <div class="header-status-badge">
+        <span class="status-indicator" id="statusIndicator"></span>
+        <span class="status-text" id="statusText">Checking connection...</span>
+        <button id="settingsBtn" class="btn-icon" title="API Settings" aria-label="API Settings">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </div>
     </div>
   </header>
 
-  <div class="api-bar">
-    <div class="api-bar-container">
-      <div class="api-status-group">
-        <span class="status-indicator" id="statusIndicator"></span>
-        <span class="status-text" id="statusText">Connecting to backend API...</span>
+  <!-- API Settings Modal (Discreet, for custom endpoint configuration) -->
+  <div id="settingsModal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">API Connection Settings</h3>
+        <button id="closeSettingsBtn" class="modal-close" aria-label="Close settings">&times;</button>
       </div>
-      <div class="api-config-group">
-        <label for="backendUrlInput">Backend URL:</label>
-        <input type="text" id="backendUrlInput" value="http://localhost:8000" placeholder="e.g. https://your-space.hf.space">
-        <button id="reconnectBtn" class="btn btn-secondary">Connect</button>
+      <div class="modal-body">
+        <p class="modal-description">The application automatically connects to the production OCR backend. You can override the backend URL below if testing a custom server.</p>
+        <label for="backendUrlInput" class="form-label">Backend Service URL:</label>
+        <input type="text" id="backendUrlInput" class="form-input" placeholder="e.g. https://handwritten-notes-ocr.onrender.com">
+      </div>
+      <div class="modal-footer">
+        <button id="resetBackendBtn" class="btn btn-secondary">Reset Default</button>
+        <button id="reconnectBtn" class="btn btn-primary">Save & Connect</button>
       </div>
     </div>
   </div>

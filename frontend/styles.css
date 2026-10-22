@@ -51,6 +51,16 @@ body {
 .header-container {
   max-width: 1200px;
   margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.header-titles {
+  flex: 1;
+  min-width: 260px;
 }
 
 .app-title {
@@ -66,44 +76,37 @@ body {
   margin-top: 0.15rem;
 }
 
-/* API Config & Status Bar */
-.api-bar {
-  background-color: #f1f5f9;
-  border-bottom: 1px solid var(--color-border);
-  padding: 0.5rem 1.5rem;
-}
-
-.api-bar-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  font-size: 0.8125rem;
-}
-
-.api-status-group {
-  display: flex;
+/* Header Status Badge */
+.header-status-badge {
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background-color: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
 }
 
 .status-indicator {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background-color: #94a3b8;
   display: inline-block;
+  transition: background-color 0.2s ease;
 }
 
 .status-indicator.online {
   background-color: var(--color-success);
+  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2);
 }
 
 .status-indicator.offline {
   background-color: var(--color-error);
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
 }
 
 .status-text {
@@ -111,24 +114,110 @@ body {
   color: var(--color-text-muted);
 }
 
-.api-config-group {
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  padding: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color 0.15s ease, background-color 0.15s ease;
+  margin-left: 0.25rem;
+}
+
+.btn-icon:hover {
+  color: var(--color-text-main);
+  background-color: var(--color-border);
+}
+
+/* API Settings Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.5);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  backdrop-filter: blur(2px);
 }
 
-.api-config-group label {
-  color: var(--color-text-muted);
-  font-weight: 500;
-}
-
-.api-config-group input {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.8125rem;
+.modal-card {
+  background-color: var(--color-card-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  width: 240px;
-  background-color: #ffffff;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modal-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.modal-close:hover {
+  color: var(--color-text-main);
+}
+
+.modal-body {
+  padding: 1.25rem;
+}
+
+.modal-description {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+  line-height: 1.45;
+}
+
+.modal-body .form-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-top: 0.35rem;
+  font-family: var(--font-family);
+}
+
+.modal-body .form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.15);
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  border-top: 1px solid var(--color-border);
+  background-color: #f8fafc;
 }
 
 /* Main Container & Grid */

@@ -1,10 +1,12 @@
 ---
-title: Handwritten Notes to Digital Text Converter
+title: Handwritten Api
 emoji: 📝
 colorFrom: indigo
 colorTo: blue
-sdk: docker
-app_port: 7860
+sdk: gradio
+sdk_version: 4.44.0
+app_file: app.py
+pinned: false
 ---
 
 # Handwritten Notes to Digital Text Converter
@@ -94,9 +96,7 @@ Project_3_Handwritten-Text-Extraction/
 ├── Dockerfile                 # Container definition for Hugging Face Spaces
 ├── netlify.toml               # Deployment configuration for Netlify
 ├── requirements.txt           # Pinned Python package dependencies
-├── test_backend.py            # Unit and API integration test suite
-├── test_e2e_workflow.py       # End-to-end multi-pipeline verification
-└── evaluate_accuracy.py       # CER/WER accuracy benchmarking on IAM dataset
+└── run_app.bat                # Windows one-click local startup script
 ```
 
 ---
@@ -153,31 +153,9 @@ Open your browser to: **`http://localhost:8501`**.
 
 ---
 
-## 6. Running the Automated Test Suites
+## 6. Deployment Instructions
 
-### 1. Backend and API Test Suite
-Validates image preprocessing, EasyOCR loading, reading-order sorting, and all REST endpoints:
-```bash
-python test_backend.py
-```
-
-### 2. End-to-End Multi-Pipeline Verification
-Simulates frontend browser requests, testing all 4 preprocessing pipelines and file uploads:
-```bash
-python test_e2e_workflow.py
-```
-
-### 3. Quantitative Accuracy Benchmark
-Computes Character Error Rate (CER), Word Error Rate (WER), and accuracy across the IAM handwriting dataset:
-```bash
-python evaluate_accuracy.py
-```
-
----
-
-## 7. Deployment Instructions
-
-### 7.1 Deploy Backend to Hugging Face Spaces
+### 6.1 Deploy Backend to Hugging Face Spaces
 
 1. Create a free account at [huggingface.co](https://huggingface.co).
 2. Click **New Space** ([huggingface.co/new-space](https://huggingface.co/new-space)).
@@ -195,7 +173,7 @@ python evaluate_accuracy.py
 6. Your backend API URL will be:
    `https://<YOUR-USERNAME>-handwritten-text-extractor.hf.space`
 
-### 7.2 Deploy Frontend to Netlify
+### 6.2 Deploy Frontend to Netlify
 
 #### Method A: Netlify Drop (Instant Zero-CLI Deployment)
 1. Log in to [netlify.com](https://www.netlify.com).
@@ -210,7 +188,7 @@ python evaluate_accuracy.py
    - **Publish directory**: `frontend`
 3. Click **Deploy Site**.
 
-### 7.3 Connect Netlify Frontend to Hugging Face Backend
+### 6.3 Connect Netlify Frontend to Hugging Face Backend
 1. Open your live Netlify website in any browser.
 2. In the top **Backend URL** field, enter your Hugging Face Space URL:
    `https://<YOUR-USERNAME>-handwritten-text-extractor.hf.space`
@@ -218,7 +196,7 @@ python evaluate_accuracy.py
 
 ---
 
-## 8. Deployment Considerations and Platform Behaviors
+## 7. Deployment Considerations and Platform Behaviors
 
 - **Hugging Face Sleeping Policy**: On the free tier, Hugging Face Spaces pauses containers after 48 hours of inactivity. When a new request arrives at a sleeping Space, it undergoes a cold start lasting approximately 30–45 seconds. The frontend features a connection status monitor and timeout handling to accommodate this.
 - **Netlify CDN Reliability**: The Netlify frontend is statically served from global edge caches, meaning it never sleeps and loads instantaneously.
@@ -226,7 +204,7 @@ python evaluate_accuracy.py
 
 ---
 
-## 9. Empirical Accuracy Findings
+## 8. Empirical Accuracy Findings
 
 Benchmarked against authentic ground-truth transcriptions from the IAM Handwriting Database:
 
@@ -241,6 +219,6 @@ Benchmarked against authentic ground-truth transcriptions from the IAM Handwriti
 
 ---
 
-## 10. License
+## 9. License
 
 This project is licensed under the MIT License. IAM Handwriting Database samples are used for educational and research evaluation under the University of Bern non-commercial evaluation terms.

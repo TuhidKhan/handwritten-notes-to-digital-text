@@ -25,10 +25,10 @@ RUN python -c "import easyocr; easyocr.Reader(['en'], gpu=False)"
 # Copy application source code and dataset
 COPY . .
 
-# Set environment variables for Hugging Face Spaces
-ENV PORT=7860
+# Set environment variables
 ENV PYTHONUNBUFFERED=1
-EXPOSE 7860
+ENV PORT=8000
+EXPOSE 8000
 
-# Start Uvicorn ASGI server on port 7860
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "7860"]
+# Start Uvicorn ASGI server with dynamic port support for Render / Cloud hosts
+CMD ["sh", "-c", "uvicorn api:app --host 0.0.0.0 --port ${PORT:-8000}"]

@@ -8,6 +8,10 @@
 // DOM Elements
 const statusIndicator = document.getElementById("statusIndicator");
 const statusText = document.getElementById("statusText");
+const settingsBtn = document.getElementById("settingsBtn");
+const settingsModal = document.getElementById("settingsModal");
+const closeSettingsBtn = document.getElementById("closeSettingsBtn");
+const resetBackendBtn = document.getElementById("resetBackendBtn");
 const backendUrlInput = document.getElementById("backendUrlInput");
 const reconnectBtn = document.getElementById("reconnectBtn");
 
@@ -41,14 +45,41 @@ const copyBtn = document.getElementById("copyBtn");
 const downloadBtn = document.getElementById("downloadBtn");
 const statusMessage = document.getElementById("statusMessage");
 
-// Auto-detect origin if served from backend directly (e.g. Hugging Face Spaces or localhost:8000)
-if (window.location.protocol.startsWith("http") && !window.location.host.includes("netlify.app")) {
-  backendUrlInput.value = window.location.origin;
+// Default Production Backend URL (Render Web Service)
+const DEFAULT_RENDER_BACKEND = "https://handwritten-notes-ocr.onrender.com";
+
+function getDefaultBackendUrl() {
+  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  if (isLocal) {
+    return "http://localhost:8000";
+  }
+  if (!window.location.host.includes("netlify.app")) {
+    return window.location.origin;
+  }
+  return DEFAULT_RENDER_BACKEND;
 }
+
+function getBackendUrl() {
+  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  const saved = localStorage.getItem("ocr_backend_url");
+  if (isLocal) {
+    return (saved && (saved.includes("localhost") || saved.includes("127.0.0.1"))) ? saved : "http://localhost:8000";
+  }
+  if (!window.location.host.includes("netlify.app")) {
+    return window.location.origin;
+  }
+  if (saved && !saved.includes("localhost") && !saved.includes("127.0.0.1") && !saved.includes("hf.space")) {
+    return saved.trim().replace(/\/$/, "");
+  }
+  return DEFAULT_RENDER_BACKEND;
+}
+
+// Initialize input value
+backendUrlInput.value = getBackendUrl();
 
 // Application State
 const state = {
-  backendUrl: backendUrlInput.value.trim().replace(/\/$/, ""),
+  backendUrl: getBackendUrl(),
   selectedFile: null,
   selectedSampleId: null,
   selectedSampleGroundTruth: null,
@@ -60,36 +91,38 @@ const state = {
 // 1. Initialization and Backend Connection
 // -------------------------------------------------------------
 
-function getBackendUrl() {
-  return backendUrlInput.value.trim().replace(/\/$/, "");
-}
-
 async function checkBackendHealth() {
   const url = getBackendUrl();
+  state.backendUrl = url;
   statusIndicator.className = "status-indicator";
-  statusText.textContent = "Checking backend connectivity...";
+  statusText.textContent = "Connecting...";
+
+  let wakeTimer = setTimeout(() => {
+    statusText.textContent = "Waking server (30s)...";
+  }, 3500);
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
+    const timeoutId = setTimeout(() => controller.abort(), 45000);
 
     const response = await fetch(`${url}/health`, {
       method: "GET",
       signal: controller.signal,
     });
     clearTimeout(timeoutId);
+    clearTimeout(wakeTimer);
 
     if (response.ok) {
-      const data = await response.json();
       statusIndicator.className = "status-indicator online";
-      statusText.textContent = `Connected: ${data.model || "Ready"}`;
+      statusText.textContent = "System Online";
       loadSamples();
     } else {
       throw new Error(`HTTP ${response.status}`);
     }
   } catch (err) {
+    clearTimeout(wakeTimer);
     statusIndicator.className = "status-indicator offline";
-    statusText.textContent = "Backend offline or unreachable. Check URL.";
+    statusText.textContent = "Service Offline";
   }
 }
 
@@ -412,9 +445,51 @@ function showNotice(msg) {
   }, 4000);
 }
 
-reconnectBtn.addEventListener("click", () => {
-  checkBackendHealth();
-});
+// Settings Modal Events
+if (settingsBtn && settingsModal) {
+  settingsBtn.addEventListener("click", () => {
+    backendUrlInput.value = getBackendUrl();
+    settingsModal.style.display = "flex";
+  });
+
+  if (closeSettingsBtn) {
+    closeSettingsBtn.addEventListener("click", () => {
+      settingsModal.style.display = "none";
+    });
+  }
+
+  settingsModal.addEventListener("click", (e) => {
+    if (e.target === settingsModal) {
+      settingsModal.style.display = "none";
+    }
+  });
+
+  if (resetBackendBtn) {
+    resetBackendBtn.addEventListener("click", () => {
+      localStorage.removeItem("ocr_backend_url");
+      backendUrlInput.value = getDefaultBackendUrl();
+      state.backendUrl = getDefaultBackendUrl();
+      settingsModal.style.display = "none";
+      checkBackendHealth();
+      showNotice("Reset to default backend endpoint.");
+    });
+  }
+}
+
+if (reconnectBtn) {
+  reconnectBtn.addEventListener("click", () => {
+    const customUrl = backendUrlInput.value.trim().replace(/\/$/, "");
+    if (customUrl) {
+      localStorage.setItem("ocr_backend_url", customUrl);
+      state.backendUrl = customUrl;
+    }
+    if (settingsModal) {
+      settingsModal.style.display = "none";
+    }
+    checkBackendHealth();
+    showNotice("Saved backend endpoint. Reconnecting...");
+  });
+}
 
 // Initial boot check
 checkBackendHealth();
