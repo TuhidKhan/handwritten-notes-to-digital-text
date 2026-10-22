@@ -46,7 +46,7 @@ const downloadBtn = document.getElementById("downloadBtn");
 const statusMessage = document.getElementById("statusMessage");
 
 // Default Production Backend URL (Render Web Service)
-const DEFAULT_RENDER_BACKEND = "https://handwritten-notes-ocr.onrender.com";
+const DEFAULT_RENDER_BACKEND = "https://handwritten-notes-to-digital-text.onrender.com";
 
 function getDefaultBackendUrl() {
   const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
