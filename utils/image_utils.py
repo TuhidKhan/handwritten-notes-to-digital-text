@@ -171,6 +171,32 @@ def binarize(gray: np.ndarray, method: str = "otsu") -> np.ndarray:
     return gray
 
 
+def detect_ruled_lines(gray: np.ndarray) -> bool:
+    """Detects whether an image contains prominent horizontal notebook ruling lines.
+
+    Notebook paper contains continuous horizontal lines that can be amplified into
+    black stroke-slicing artifacts if local contrast equalization (CLAHE) is applied.
+
+    Args:
+        gray: Single-channel 8-bit grayscale image.
+
+    Returns:
+        bool: True if horizontal ruling lines are detected, False otherwise.
+    """
+    h, w = gray.shape[:2]
+    # Local adaptive threshold to extract thin dark structures
+    thresh = cv2.adaptiveThreshold(
+        gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 15, 4
+    )
+    # Horizontal morphological kernel looking for continuous horizontal segments
+    kernel_len = max(20, w // 25)
+    horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (kernel_len, 1))
+    detected_lines = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, horizontal_kernel, iterations=1)
+    line_pixels = int(np.sum(detected_lines > 0))
+    line_density = line_pixels / float(h * w)
+    return line_density > 0.015 or line_pixels > 800
+
+
 def preprocess_image(
     source: Union[str, bytes, np.ndarray, Image.Image],
     pipeline_mode: str = "enhanced_grayscale",
@@ -200,9 +226,18 @@ def preprocess_image(
     if pipeline_mode == "enhanced_grayscale":
         # Step 2: Edge-preserving noise filtration
         denoised = reduce_noise(gray, method="bilateral")
-        # Step 3: Localized contrast enhancement (CLAHE)
-        processed = apply_clahe(denoised, clip_limit=2.0)
-        return original, processed
+
+        # Step 3: Document-aware contrast handling
+        if detect_ruled_lines(gray):
+            # For ruled notebook paper: Avoid CLAHE because it amplifies faint blue/gray lines
+            # into thick black bars that slice through handwritten letters.
+            # Denoised grayscale preserves the natural contrast between dark ink and faint lines.
+            return original, denoised
+        else:
+            # For plain unlined paper (e.g. IAM benchmark scans): Apply gentle CLAHE
+            # with 16x16 contextual tiles to lift faded vintage ink without stroke halos.
+            processed = apply_clahe(denoised, clip_limit=1.5, tile_grid_size=(16, 16))
+            return original, processed
 
     elif pipeline_mode == "otsu_binarized":
         denoised = reduce_noise(gray, method="gaussian")

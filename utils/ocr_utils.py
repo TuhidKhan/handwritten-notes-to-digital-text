@@ -291,8 +291,15 @@ def run_ocr(
     if reader is None:
         reader = get_ocr_reader(languages=languages or ["en"])
 
-    # Step 1: Run deep learning inference
-    raw_results = reader.readtext(image, detail=1, paragraph=False)
+    # Step 1: Run deep learning inference with handwriting-tuned detection thresholds
+    raw_results = reader.readtext(
+        image,
+        detail=1,
+        paragraph=False,
+        text_threshold=0.6,
+        low_text=0.35,
+        link_threshold=0.35,
+    )
 
     # Step 2: Sort detections into natural reading order
     sorted_results = sort_detections_in_reading_order(raw_results)
